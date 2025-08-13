@@ -100,8 +100,16 @@ function App() {
   };
 
   const handleGenerateReport = async (): Promise<string> => {
-    if (!roiResults || !inputData || !project) {
-      throw new Error('No results available');
+    if (!project) {
+      throw new Error('Project information is missing');
+    }
+    
+    if (!inputData) {
+      throw new Error('Input data is missing');
+    }
+    
+    if (!roiResults) {
+      throw new Error('ROI results are missing');
     }
 
     return await generateAIReport({
