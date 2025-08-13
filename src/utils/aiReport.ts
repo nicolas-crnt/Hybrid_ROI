@@ -101,13 +101,7 @@ Please provide a detailed strategic analysis report with the following structure
 
 ## CONCLUSION
 
-FORMATTING REQUIREMENTS:
-- Use clear headings with # and ## markdown formatting
 - Include bullet points and numbered lists where appropriate
-- Write in professional, analytical tone
-- Provide specific, data-driven recommendations
-- Reference the project name throughout the analysis
-- Include quantitative insights from the provided metrics
 
 Focus on:
 - Actionable insights and strategic recommendations
@@ -115,7 +109,6 @@ Focus on:
 - Long-term value creation opportunities
 - Risk mitigation strategies
 - Implementation guidance
-
 The report should be suitable for executive leadership and board presentations, with specific focus on the "${input.project.name}" project context.
 `;
 }
