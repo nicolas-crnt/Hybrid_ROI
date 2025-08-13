@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrendingUp, Users, Leaf, Calculator, ArrowRight } from 'lucide-react';
+import { TrendingUp, Users, Leaf, Calculator, ArrowRight, MapPin, Mail, Phone, Linkedin, Facebook, Instagram } from 'lucide-react';
 
 interface HomePageProps {
   onGetStarted: () => void;
@@ -30,6 +30,104 @@ export default function HomePage({ onGetStarted }: HomePageProps) {
         </div>
       </div>
 
+      {/* Contact Section */}
+      <div className="bg-gray-900 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Contact BluePlan
+            </h2>
+            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+              Reach out to our regional teams for expert sustainability consulting and ROI analysis
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {/* Singapore Office */}
+            <div className="bg-gray-800 rounded-lg p-8">
+              <h3 className="text-xl font-semibold text-white mb-2">
+                Singapore (Asia-Pacific)
+              </h3>
+              <div className="space-y-3 text-gray-300">
+                <div className="flex items-start space-x-3">
+                  <MapPin className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                  <span>531 Upper Cross Street, 03-62 Hong Lim Complex, 050531</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Mail className="h-5 w-5 text-blue-400 flex-shrink-0" />
+                  <a href="mailto:dale@blueplan.eco" className="text-blue-400 hover:text-blue-300 transition-colors">
+                    dale@blueplan.eco
+                  </a>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Phone className="h-5 w-5 text-blue-400 flex-shrink-0" />
+                  <a href="tel:+6596634309" className="text-blue-400 hover:text-blue-300 transition-colors">
+                    +65 9663 4309
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* UK Office */}
+            <div className="bg-gray-800 rounded-lg p-8">
+              <h3 className="text-xl font-semibold text-white mb-2">
+                United Kingdom (EMEA)
+              </h3>
+              <div className="space-y-3 text-gray-300">
+                <div className="flex items-start space-x-3">
+                  <MapPin className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                  <span>7 Oakland Close<br />OX29 8AX Freeland, United Kingdom</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Mail className="h-5 w-5 text-blue-400 flex-shrink-0" />
+                  <a href="mailto:henrik@blueplan.eco" className="text-blue-400 hover:text-blue-300 transition-colors">
+                    henrik@blueplan.eco
+                  </a>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Phone className="h-5 w-5 text-blue-400 flex-shrink-0" />
+                  <a href="tel:+447768466801" className="text-blue-400 hover:text-blue-300 transition-colors">
+                    +44 776 846 6801
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Social Media Links */}
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-white mb-6">
+              Follow Us
+            </h3>
+            <div className="flex justify-center space-x-6">
+              <a
+                href="https://www.linkedin.com/company/blueplanconsulting/posts/?feedView=all"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
+              >
+                <Linkedin className="h-6 w-6" />
+              </a>
+              <a
+                href="https://www.facebook.com/people/Blue-Plan-Ltd/100063774323591/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-12 h-12 bg-blue-800 text-white rounded-full hover:bg-blue-900 transition-colors"
+              >
+                <Facebook className="h-6 w-6" />
+              </a>
+              <a
+                href="https://www.instagram.com/bluep.lan/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-12 h-12 bg-pink-600 text-white rounded-full hover:bg-pink-700 transition-colors"
+              >
+                <Instagram className="h-6 w-6" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
       {/* Features Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid md:grid-cols-3 gap-8">
