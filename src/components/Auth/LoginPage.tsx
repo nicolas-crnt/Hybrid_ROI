@@ -56,7 +56,7 @@ export default function LoginPage({ onSkipLogin, onLoginSuccess }: LoginPageProp
               <Calculator className="h-12 w-12 text-blue-600" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Hybrid TBL ROI Calculator
+              Hybrid ROI Calculator
             </h1>
             <p className="text-gray-600">
               {isSignUp ? 'Create your account' : 'Sign in to your account'}

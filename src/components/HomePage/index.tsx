@@ -12,8 +12,7 @@ export default function HomePage({ onGetStarted }: HomePageProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <div className="text-center">
           <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Hybrid Triple Bottom Line
-            <span className="text-blue-600 block mt-2">ROI Calculator</span>
+            <span className="text-blue-600">Hybrid ROI Calculator</span>
           </h1>
           
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed">

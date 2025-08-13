@@ -31,7 +31,7 @@ export default function Header({ currentPage, onNavigate, project, onNewProject,
             <Calculator className="h-8 w-8 text-blue-600" />
             <div>
               <h1 className="text-xl font-bold text-gray-900">
-                Hybrid TBL ROI Calculator
+                Hybrid ROI Calculator
               </h1>
               {project && (
                 <p className="text-sm text-gray-600">
