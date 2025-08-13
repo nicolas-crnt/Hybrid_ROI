@@ -1,22 +1,43 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, FolderOpen, Plus, Trash2 } from 'lucide-react';
-import { SavedProject, getSavedProjects, deleteProject } from '../../utils/projectStorage';
+import { Project, getUserProjects, deleteProject } from '../../services/projectService';
+import { useAuth } from '../../hooks/useAuth';
 
 interface ProjectDropdownProps {
   user: string | null;
   currentProject: any;
   onNewProject: () => void;
-  onLoadProject: (project: SavedProject) => void;
+  onLoadProject: (project: Project) => void;
 }
 
 export default function ProjectDropdown({ user, currentProject, onNewProject, onLoadProject }: ProjectDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [projects, setProjects] = useState<SavedProject[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { user: authUser } = useAuth();
 
   useEffect(() => {
-    setProjects(getSavedProjects());
+    if (isOpen) {
+      loadProjects();
+    }
   }, [isOpen]);
+
+  const loadProjects = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await getUserProjects(authUser?.id);
+      if (error) {
+        console.error('Error loading projects:', error);
+      } else {
+        setProjects(data || []);
+      }
+    } catch (error) {
+      console.error('Error loading projects:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -29,11 +50,15 @@ export default function ProjectDropdown({ user, currentProject, onNewProject, on
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleDeleteProject = (e: React.MouseEvent, projectId: string) => {
+  const handleDeleteProject = async (e: React.MouseEvent, projectId: string) => {
     e.stopPropagation();
     if (confirm('Are you sure you want to delete this project?')) {
-      deleteProject(projectId);
-      setProjects(getSavedProjects());
+      const { error } = await deleteProject(projectId);
+      if (error) {
+        console.error('Error deleting project:', error);
+      } else {
+        await loadProjects();
+      }
     }
   };
 
@@ -74,7 +99,12 @@ export default function ProjectDropdown({ user, currentProject, onNewProject, on
           </div>
 
           <div className="max-h-64 overflow-y-auto">
-            {projects.length === 0 ? (
+            {loading ? (
+              <div className="p-4 text-center text-gray-500">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                <p className="text-sm">Loading projects...</p>
+              </div>
+            ) : projects.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
                 <FolderOpen className="h-8 w-8 mx-auto mb-2 text-gray-400" />
                 <p className="text-sm">No projects yet</p>
@@ -105,9 +135,11 @@ export default function ProjectDropdown({ user, currentProject, onNewProject, on
                             {project.description}
                           </p>
                         )}
-                        <div className="mt-2 text-xs text-gray-500">
-                          <span>by {project.createdBy}</span>
-                        </div>
+                        {user && (
+                          <div className="mt-2 text-xs text-gray-500">
+                            <span>by {user}</span>
+                          </div>
+                        )}
                       </div>
                       
                       <button

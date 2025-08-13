@@ -1,20 +1,25 @@
 import React from 'react';
 import { Calculator, Home, FileText, BarChart3, LogOut } from 'lucide-react';
 import { ProjectInfo } from '../../types';
+import { useAuth } from '../../hooks/useAuth';
 import ProjectDropdown from './ProjectDropdown';
-import { SavedProject } from '../../utils/projectStorage';
+import { Project } from '../../services/projectService';
 
 interface HeaderProps {
   currentPage: string;
   onNavigate: (page: string) => void;
-  user: string | null;
   project: ProjectInfo | null;
   onNewProject: () => void;
-  onLoadProject: (project: SavedProject) => void;
+  onLoadProject: (project: Project) => void;
 }
 
-export default function Header({ currentPage, onNavigate, user, project, onNewProject, onLoadProject }: HeaderProps) {
-  const handleLogout = () => {
+export default function Header({ currentPage, onNavigate, project, onNewProject, onLoadProject }: HeaderProps) {
+  const { user, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    if (user) {
+      await signOut();
+    }
     window.location.reload();
   };
 
@@ -78,7 +83,7 @@ export default function Header({ currentPage, onNavigate, user, project, onNewPr
             {/* User Info */}
             <div className="flex items-center space-x-4">
               <ProjectDropdown
-                user={user}
+                user={user?.email || null}
                 currentProject={project}
                 onNewProject={onNewProject}
                 onLoadProject={onLoadProject}
@@ -89,7 +94,7 @@ export default function Header({ currentPage, onNavigate, user, project, onNewPr
                 className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
               >
                 <LogOut className="h-4 w-4" />
-                <span>Logout</span>
+                <span>{user ? 'Sign Out' : 'Logout'}</span>
               </button>
             </div>
           </div>

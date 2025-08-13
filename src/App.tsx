@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from './hooks/useAuth';
 import Header from './components/Layout/Header';
 import LoginPage from './components/Auth/LoginPage';
 import ProjectSetup from './components/ProjectSetup';
@@ -8,11 +9,11 @@ import Results from './components/Results';
 import { FinancialMetrics, EnvironmentalMetrics, SocialMetrics, CommonInputs, ROIResults, ProjectInfo } from './types';
 import { calculateROI } from './utils/calculations';
 import { generateAIReport } from './utils/aiReport';
-import { saveProject, SavedProject, generateProjectId } from './utils/projectStorage';
+import { Project, createProject, updateProject } from './services/projectService';
 
 function App() {
+  const { user, loading } = useAuth();
   const [currentPage, setCurrentPage] = useState<'login' | 'project' | 'home' | 'input' | 'results'>('login');
-  const [user, setUser] = useState<string | null>(null);
   const [project, setProject] = useState<ProjectInfo | null>(null);
   const [roiResults, setRoiResults] = useState<ROIResults | null>(null);
   const [inputData, setInputData] = useState<{
@@ -23,45 +24,53 @@ function App() {
   } | null>(null);
   const geminiApiKey = 'AIzaSyCKXG-cpWucKYYfMxY-fGVDOW5VWURt8T0';
 
-  const handleLogin = (username: string) => {
-    setUser(username);
+  // Redirect authenticated users past login
+  React.useEffect(() => {
+    if (!loading) {
+      if (user && currentPage === 'login') {
+        setCurrentPage('project');
+      }
+    }
+  }, [user, loading, currentPage]);
+
+  const handleLoginSuccess = () => {
     setCurrentPage('project');
   };
 
   const handleSkipLogin = () => {
-    setUser(null);
     setCurrentPage('project');
   };
 
-  const handleProjectCreate = (projectName: string, description: string) => {
-    const projectInfo: ProjectInfo = {
-      id: generateProjectId(),
-      name: projectName,
-      description,
-      createdBy: user || 'Guest',
-      createdAt: new Date()
-    };
-    setProject(projectInfo);
-    
-    // Save project to localStorage
-    const savedProject: SavedProject = {
-      id: projectInfo.id,
-      name: projectInfo.name,
-      description: projectInfo.description,
-      createdBy: projectInfo.createdBy || 'Guest',
-      createdAt: projectInfo.createdAt,
-      lastModified: new Date()
-    };
-    saveProject(savedProject);
-    
-    setCurrentPage('home');
+  const handleProjectCreate = async (projectName: string, description: string) => {
+    try {
+      const { data, error } = await createProject(projectName, description, user?.id);
+      
+      if (error) {
+        console.error('Error creating project:', error);
+        return;
+      }
+
+      if (data) {
+        const projectInfo: ProjectInfo = {
+          id: data.id,
+          name: data.name,
+          description: data.description,
+          createdBy: user?.email || 'Guest',
+          createdAt: new Date(data.created_at)
+        };
+        setProject(projectInfo);
+        setCurrentPage('home');
+      }
+    } catch (error) {
+      console.error('Error creating project:', error);
+    }
   };
 
   const handleGetStarted = () => {
     setCurrentPage('input');
   };
 
-  const handleCalculate = (data: {
+  const handleCalculate = async (data: {
     financial: FinancialMetrics;
     environmental: EnvironmentalMetrics;
     social: SocialMetrics;
@@ -71,19 +80,16 @@ function App() {
     const results = calculateROI(data.financial, data.environmental, data.social, data.common);
     setRoiResults(results);
     
-    // Update saved project with data and results
+    // Update project in database
     if (project) {
-      const savedProject: SavedProject = {
-        id: project.id,
-        name: project.name,
-        description: project.description,
-        createdBy: project.createdBy || 'Guest',
-        createdAt: project.createdAt,
-        lastModified: new Date(),
-        data,
-        results
-      };
-      saveProject(savedProject);
+      try {
+        await updateProject(project.id, {
+          data,
+          results
+        });
+      } catch (error) {
+        console.error('Error updating project:', error);
+      }
     }
     
     setCurrentPage('results');
@@ -112,13 +118,13 @@ function App() {
     setCurrentPage('project');
   };
 
-  const handleLoadProject = (savedProject: SavedProject) => {
+  const handleLoadProject = (savedProject: Project) => {
     const projectInfo: ProjectInfo = {
       id: savedProject.id,
       name: savedProject.name,
       description: savedProject.description,
-      createdBy: savedProject.createdBy,
-      createdAt: savedProject.createdAt
+      createdBy: user?.email || 'Guest',
+      createdAt: new Date(savedProject.created_at)
     };
     
     setProject(projectInfo);
@@ -137,13 +143,16 @@ function App() {
     }
   };
 
+  if (loading) {
+    return <div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {currentPage !== 'login' && (
         <Header 
           currentPage={currentPage} 
           onNavigate={setCurrentPage}
-          user={user}
           project={project}
           onNewProject={handleNewProject}
           onLoadProject={handleLoadProject}
@@ -152,7 +161,7 @@ function App() {
       
       {currentPage === 'login' && (
         <LoginPage 
-          onLogin={handleLogin}
+          onLoginSuccess={handleLoginSuccess}
           onSkipLogin={handleSkipLogin}
         />
       )}
